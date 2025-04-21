@@ -8,25 +8,30 @@ export default function FallingFlowers() {
       <div
         className={`falling-flowers pointer-events-none absolute top-0 left-0 z-10 h-full w-full`}
       >
-        {[...Array(10)].map((_, index) => (
+        {[...Array(30)].map((_, index) => (
           <div
             key={index}
             className={`flower-${index} absolute`}
             style={{
-              animation: `fall ${Math.random() * 5 + 5}s linear infinite, sway ${
-                Math.random() * 2 + 1
-              }s ease-in-out infinite`,
+              animation: `fall ${Math.random() * 5 + 5}s linear infinite`,
               left: `${Math.random() * 100}vw`,
               animationDelay: `${Math.random() * 5}s`,
             }}
           >
-            <Image
-              src="/tralalero-tralala.png"
-              alt="NikeShark"
-              width={50}
-              height={50}
-              priority
-            />
+            <div
+              className="swaying"
+              style={{
+                animation: `sway ${Math.random() * 2 + 1}s ease-in-out infinite`,
+              }}
+            >
+              <Image
+                src="/tralalero-tralala.png"
+                alt="NikeShark"
+                width={50}
+                height={50}
+                priority
+              />
+            </div>
           </div>
         ))}
       </div>
@@ -44,9 +49,33 @@ export default function FallingFlowers() {
           }
         }
 
-        .falling-flowers {
+        @keyframes sway {
+          0% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(20px);
+          }
+          100% {
+            transform: translateX(0);
+          }
+        }
+
+        .falling-flowers .flower-0,
+        .falling-flowers .flower-1,
+        .falling-flowers .flower-2,
+        .falling-flowers .flower-3,
+        .falling-flowers .flower-4,
+        .falling-flowers .flower-5,
+        .falling-flowers .flower-6,
+        .falling-flowers .flower-7,
+        .falling-flowers .flower-8,
+        .falling-flowers .flower-9 {
           position: absolute;
-          animation: fall 5s ease-in-out infinite;
+        }
+
+        .swaying {
+          display: inline-block;
         }
       `}</style>
     </>
