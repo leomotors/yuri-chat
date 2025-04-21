@@ -19,6 +19,7 @@ pnpm i
 4.
 ```sh
 pnpm prisma migrate dev
+pnpm prisma generate
 ```
 
 
