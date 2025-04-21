@@ -38,6 +38,8 @@ model Chat {
   chatMemberships ChatMembership[]
   messages        Message[]
 
+  lastMessageSent DateTime? @map("last_message_sent")
+
   @@map("chat")
 }
 
@@ -49,6 +51,8 @@ model ChatMembership {
 
   user User @relation(fields: [userId], references: [id])
   chat Chat @relation(fields: [chatId], references: [id])
+
+  joinedAt DateTime @default(now()) @map("joined_at")
 
   @@map("chat_membership")
 }
