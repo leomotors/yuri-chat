@@ -15,17 +15,26 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.787.0",
     "@eslint/eslintrc": "^3",
     "@leomotors/config": "1.0.0-rc.1",
     "@tailwindcss/postcss": "^4",
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "bcrypt": "^5.1.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
+    "jose": "^6.0.10",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.6.0",
+    "sass": "^1.86.3",
+    "server-only": "^0.0.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "zod": "^3.24.3"
   },
   "packageManager": "pnpm@10.8.1"
 }

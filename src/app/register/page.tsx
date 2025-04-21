@@ -1,17 +1,14 @@
-import Link from "next/link";
-import styles from "@/styles/form.module.scss";
 import { limits } from "@/constants";
+import styles from "@/styles/form.module.scss";
+import { RegisterForm } from "./RegisterForm";
 
-import { LoginForm } from "./LoginForm";
-
-export default function Home() {
+export default function Register() {
   return (
     <main className="flex h-screen w-full items-center justify-center bg-gray-100">
       <div className="flex flex-col items-center gap-4 rounded-lg bg-white p-6 shadow-lg">
-        <h1 className="text-2xl font-bold">Welcome to Yuri Chat</h1>
-        <p className="text-xl">Please Login</p>
+        <h1 className="text-2xl font-bold">Register</h1>
 
-        <LoginForm className={styles.form}>
+        <RegisterForm className={styles.form}>
           <div>
             <label htmlFor="username">Username</label>
             <input
@@ -21,6 +18,19 @@ export default function Home() {
               placeholder="Enter your username"
               minLength={limits.username.min}
               maxLength={limits.username.max}
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Enter your name"
+              minLength={limits.name.min}
+              maxLength={limits.name.max}
               required
             />
           </div>
@@ -38,18 +48,19 @@ export default function Home() {
             />
           </div>
 
-          <button type="submit">Login</button>
-        </LoginForm>
+          <div>
+            <label htmlFor="profilePicture">Upload your Profile Picture</label>
+            <input
+              type="file"
+              id="profilePicture"
+              name="profilePicture"
+              accept="image/*"
+              required
+            />
+          </div>
 
-        <p>
-          Don't have an account?{" "}
-          <Link
-            href="/register"
-            className="text-blue-500 transition-colors hover:text-blue-400"
-          >
-            Register
-          </Link>
-        </p>
+          <button type="submit">Login</button>
+        </RegisterForm>
       </div>
     </main>
   );

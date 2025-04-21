@@ -4,6 +4,7 @@ CREATE TYPE "MessageType" AS ENUM ('TEXT', 'MEDIA', 'STICKER');
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "profile_picture" TEXT NOT NULL,
@@ -41,6 +42,9 @@ CREATE TABLE "message" (
 
     CONSTRAINT "message_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
 
 -- AddForeignKey
 ALTER TABLE "chat_membership" ADD CONSTRAINT "chat_membership_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
