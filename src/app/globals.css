@@ -10,6 +10,12 @@
   --color-foreground: var(--foreground); */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-background: #ffe4ec;
+  --color-foreground: #fff0f5;
+  --color-nav: #ffd1dc; /* Nav and Footer */
+  --color-text-primary: #d81b60;
+  --color-text-primary-light: #ec407a;
 }
 
 body {

@@ -1,14 +1,23 @@
 import { limits } from "@/constants";
 import styles from "@/styles/form.module.scss";
 import { RegisterForm } from "./RegisterForm";
+import { twMerge } from "tailwind-merge";
+import DuoMascot from "@/components/DuoMascot";
+import FallingFlowers from "@/components/FallingFlowers";
 
 export default function Register() {
   return (
-    <main className="flex h-screen w-full items-center justify-center bg-gray-100">
-      <div className="flex flex-col items-center gap-4 rounded-lg bg-white p-6 shadow-lg">
-        <h1 className="text-2xl font-bold">Register</h1>
+    <div className="flex flex-grow items-center justify-center px-4">
+      <FallingFlowers />
 
-        <RegisterForm className={styles.form}>
+      <main className="bg-foreground flex flex-col items-center justify-center gap-6 rounded-xl p-12 shadow-lg">
+        <h1 className="text-text-primary text-2xl font-bold">Register</h1>
+
+        <DuoMascot />
+
+        <RegisterForm
+          className={twMerge(styles.form, "text-text-primary-light")}
+        >
           <div>
             <label htmlFor="username">Username</label>
             <input
@@ -59,9 +68,9 @@ export default function Register() {
             />
           </div>
 
-          <button type="submit">Login</button>
+          <button type="submit">Register</button>
         </RegisterForm>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

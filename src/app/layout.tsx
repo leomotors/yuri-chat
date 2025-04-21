@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,26 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className="bg-background relative flex min-h-screen flex-col overflow-hidden text-gray-800">
+          {/* Header */}
+          <nav className="bg-[#FFD1DC] p-6 shadow-md">
+            <div className="mx-auto flex max-w-7xl items-center justify-between">
+              <h1 className="text-4xl font-extrabold tracking-wide text-[#EC407A]">
+                <Link href="/">Yuri-Chat</Link>
+              </h1>
+              <span className="text-sm text-gray-700 italic">
+                Socket Programming Project
+              </span>
+            </div>
+          </nav>
+
+          {children}
+
+          {/* Footer */}
+          <footer className="bg-[#FFD1DC] p-4 text-center text-sm text-gray-700">
+            <p>Made with ❤️ by Group 15 「百合愛好家」</p>
+          </footer>
+        </div>
       </body>
     </html>
   );

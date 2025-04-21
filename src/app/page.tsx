@@ -1,55 +1,23 @@
+import FallingFlowers from "@/components/FallingFlowers";
 import Link from "next/link";
-import styles from "@/styles/form.module.scss";
-import { limits } from "@/constants";
 
-import { LoginForm } from "./LoginForm";
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="flex h-screen w-full items-center justify-center bg-gray-100">
-      <div className="flex flex-col items-center gap-4 rounded-lg bg-white p-6 shadow-lg">
-        <h1 className="text-2xl font-bold">Welcome to Yuri Chat</h1>
-        <p className="text-xl">Please Login</p>
+    <main className="flex flex-grow flex-col items-center justify-center gap-4 px-4">
+      <FallingFlowers />
 
-        <LoginForm className={styles.form}>
-          <div>
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              placeholder="Enter your username"
-              minLength={limits.username.min}
-              maxLength={limits.username.max}
-              required
-            />
-          </div>
+      <h1 className="text-text-primary-light text-6xl font-bold">Yuri Chat</h1>
 
-          <div>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              minLength={limits.password.min}
-              maxLength={limits.password.max}
-              required
-            />
-          </div>
+      <p className="text-2xl">Chat App for ท่านผู้เจริญ</p>
 
-          <button type="submit">Login</button>
-        </LoginForm>
+      <div className="flex gap-4">
+        <button className="rounded-xl bg-pink-600 px-4 py-2 text-xl text-pink-100">
+          <Link href="/login">Login</Link>
+        </button>
 
-        <p>
-          Don't have an account?{" "}
-          <Link
-            href="/register"
-            className="text-blue-500 transition-colors hover:text-blue-400"
-          >
-            Register
-          </Link>
-        </p>
+        <button className="rounded-xl bg-pink-200 px-4 py-2 text-xl text-pink-600">
+          <Link href="/register">Register</Link>
+        </button>
       </div>
     </main>
   );
