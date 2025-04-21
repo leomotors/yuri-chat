@@ -13,3 +13,63 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id             String @id @default(cuid())
+  name           String
+  password       String
+  profilePicture String @map("profile_picture")
+
+  chatMemberships ChatMembership[]
+  sentMessages    Message[]
+
+  @@map("users")
+}
+
+model Chat {
+  id String @id @default(cuid())
+
+  isGroupChat Boolean @map("is_group_chat")
+
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  chatMemberships ChatMembership[]
+  messages        Message[]
+
+  @@map("chat")
+}
+
+model ChatMembership {
+  id String @id @default(cuid())
+
+  userId String @map("user_id")
+  chatId String @map("chat_id")
+
+  user User @relation(fields: [userId], references: [id])
+  chat Chat @relation(fields: [chatId], references: [id])
+
+  @@map("chat_membership")
+}
+
+enum MessageType {
+  TEXT
+  MEDIA
+  STICKER
+}
+
+model Message {
+  id String @id @default(cuid())
+
+  senderId String @map("sender_id")
+  chatId   String @map("chat_id")
+
+  contentType MessageType @map("content_type")
+  content     String
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  sender User @relation(fields: [senderId], references: [id])
+  chat   Chat @relation(fields: [chatId], references: [id])
+
+  @@map("message")
+}
