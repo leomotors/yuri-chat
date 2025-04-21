@@ -98,7 +98,7 @@ export async function registerUser(_: unknown, formData: FormData) {
     sameSite: "lax",
   });
 
-  redirect("/yuri/home");
+  redirect("/home");
 }
 
 async function uploadProfilePicture(file: File, username: string) {

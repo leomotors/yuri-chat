@@ -68,5 +68,5 @@ export async function loginUser(_: unknown, formData: FormData) {
     sameSite: "lax",
   });
 
-  redirect("/yuri/home");
+  redirect("/home");
 }
