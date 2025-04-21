@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify } from "jose";
-import { environment } from "@/lib/environment";
+import { getUser } from "./lib/auth";
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
@@ -9,15 +8,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  try {
-    await jwtVerify(token, new TextEncoder().encode(environment.JWT_SECRET), {
-      algorithms: ["HS256"],
-    });
+  const username = await getUser();
 
-    return NextResponse.next();
-  } catch (err) {
+  if (!username) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
