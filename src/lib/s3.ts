@@ -1,6 +1,7 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { environment } from "./environment";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+import { environment } from "./environment";
 
 export const s3 = new S3Client({
   endpoint: environment.AWS_ENDPOINT,

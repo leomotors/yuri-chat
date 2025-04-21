@@ -1,14 +1,15 @@
 "use server";
 
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import bcrypt from "bcrypt";
+import { SignJWT } from "jose";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
 import { limits, pfpBucketName } from "@/constants";
 import { environment } from "@/lib/environment";
 import prisma from "@/lib/prisma";
 import { s3 } from "@/lib/s3";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { redirect } from "next/navigation";
-import { SignJWT } from "jose";
-import bcrypt from "bcrypt";
-import { cookies } from "next/headers";
 
 export async function registerUser(_: unknown, formData: FormData) {
   const username = formData.get("username")?.toString();

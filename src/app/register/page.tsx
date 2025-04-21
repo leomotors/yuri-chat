@@ -1,9 +1,11 @@
-import { limits } from "@/constants";
-import styles from "@/styles/form.module.scss";
-import { RegisterForm } from "./RegisterForm";
 import { twMerge } from "tailwind-merge";
+
 import DuoMascot from "@/components/DuoMascot";
 import FallingFlowers from "@/components/FallingFlowers";
+import { limits } from "@/constants";
+import styles from "@/styles/form.module.scss";
+
+import { RegisterForm } from "./RegisterForm";
 
 export default function Register() {
   return (

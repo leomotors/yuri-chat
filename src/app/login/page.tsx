@@ -1,10 +1,12 @@
 import Link from "next/link";
-import styles from "@/styles/form.module.scss";
-import { limits } from "@/constants";
-import { LoginForm } from "./LoginForm";
 import { twMerge } from "tailwind-merge";
+
 import DuoMascot from "@/components/DuoMascot";
 import FallingFlowers from "@/components/FallingFlowers";
+import { limits } from "@/constants";
+import styles from "@/styles/form.module.scss";
+
+import { LoginForm } from "./LoginForm";
 
 export default function Home() {
   return (
@@ -51,7 +53,7 @@ export default function Home() {
         </LoginForm>
 
         <p className="text-text-primary-light">
-          Don't have an account?{" "}
+          {"Don't have an account? "}
           <Link
             href="/register"
             className="text-text-primary hover:text-text-primary/60 transition-colors"

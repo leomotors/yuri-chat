@@ -1,5 +1,6 @@
-import FallingFlowers from "@/components/FallingFlowers";
 import Link from "next/link";
+
+import FallingFlowers from "@/components/FallingFlowers";
 
 export default function HomePage() {
   return (

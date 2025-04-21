@@ -2,6 +2,7 @@ import "server-only";
 
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
+
 import { environment } from "./environment";
 
 export async function getUser() {
@@ -25,7 +26,7 @@ export async function getUser() {
     const username = payload.username as string;
 
     return username;
-  } catch (err) {
+  } catch (_) {
     cookieStore.delete("token");
 
     return null;
