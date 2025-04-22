@@ -3,16 +3,20 @@
 import { createContext, useContext } from "react";
 import { Socket } from "socket.io-client";
 
-import { PublicUser } from "@/types";
+import { PublicGroupChat, PublicUserWithOnlineStatus } from "@/types";
 
 type SocketContextType = {
   socket: Socket | null;
-  onlineUsers: PublicUser[];
+  allUsers: PublicUserWithOnlineStatus[];
+  onlineUsers: PublicUserWithOnlineStatus[];
+  allGroupChats: PublicGroupChat[];
 };
 
 export const SocketContext = createContext<SocketContextType>({
   socket: null,
+  allUsers: [],
   onlineUsers: [],
+  allGroupChats: [],
 });
 
 export const useSocket = () => useContext(SocketContext);

@@ -1,0 +1,9 @@
+@reference "tailwindcss";
+
+.primaryButton {
+  @apply w-full rounded-md bg-[#F48FB1] p-3 font-semibold text-white transition duration-200 ease-in-out hover:bg-[#EC407A] focus:ring-2 focus:ring-[#EC407A] focus:outline-none;
+}
+
+.smallButton {
+  @apply rounded-md bg-[#F48FB1] px-2 py-1 text-white transition duration-200 ease-in-out hover:bg-[#EC407A] focus:ring-2 focus:ring-[#EC407A] focus:outline-none;
+}

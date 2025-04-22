@@ -17,5 +17,6 @@ export const authCookieName = "yuri-token";
 export const pfpFolderName = "profilePictures";
 
 export const eventNames = {
-  onlineUsers: "onlineUsers",
+  allUsers: "allUsers",
+  allGroupChats: "allGroupChats",
 } as const satisfies Record<string, string>;

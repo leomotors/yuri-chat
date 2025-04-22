@@ -6,7 +6,14 @@ import { Socket } from "socket.io";
 import { authCookieName, eventNames } from "@/constants";
 import { environment } from "@/lib/environment";
 import prisma from "@/lib/prisma";
-import { PublicUser } from "@/types";
+import {
+  PublicGroupChat,
+  PublicUser,
+  Chat,
+  GroupChatFull,
+  PublicUserWithOnlineStatus,
+} from "@/types";
+import { allGroupChats } from "@/lib/query";
 
 class SocketClient {
   constructor(
@@ -41,9 +48,45 @@ class UserDatabase {
   }
 }
 
+class ChatDatabase {
+  private _groupChats: GroupChatFull[] = [];
+
+  public get groupChats() {
+    return this._groupChats;
+  }
+
+  constructor() {
+    this.refresh();
+  }
+
+  private async refresh() {
+    this._groupChats = await allGroupChats();
+  }
+
+  public getPublicGroupChats() {
+    return this.groupChats
+      .filter((chat) => chat.isGroupChat)
+      .map((chat) => ({
+        id: chat.id,
+        name: chat.name,
+        createdAt: chat.createdAt,
+        lastMessageSent: chat.lastMessageSent,
+        chatMemberships: chat.chatMemberships.map((membership) => ({
+          user: {
+            username: membership.user.username,
+            name: membership.user.name,
+            profilePicture: membership.user.profilePicture,
+          },
+          joinedAt: membership.joinedAt,
+        })),
+      })) satisfies PublicGroupChat[];
+  }
+}
+
 export class SocketManager {
   private clients: Record<string, SocketClient> = {};
   private userDatabase: UserDatabase = new UserDatabase();
+  private chatDatabase: ChatDatabase = new ChatDatabase();
 
   constructor() {}
 
@@ -71,6 +114,8 @@ export class SocketManager {
 
       this.clients[socket.id] = new SocketClient(socket, username);
       this.broadcastOnlineUsers();
+      // Temp
+      this.broadcastAllGroupChats();
 
       socket.on("disconnect", () => {
         console.log(`${username} disconnected`);
@@ -95,14 +140,21 @@ export class SocketManager {
       Object.values(this.clients).map((c) => c.username),
     );
 
-    const allUsers = (await this.userDatabase.getUsersSafe([...onlineUsers]))
-      .filter((user) => onlineUsers.has(user.username))
-      .map((user) => ({
-        username: user.username,
-        name: user.name,
-        profilePicture: user.profilePicture,
-      })) satisfies PublicUser[];
+    const allUsers = (
+      await this.userDatabase.getUsersSafe([...onlineUsers])
+    ).map((user) => ({
+      username: user.username,
+      name: user.name,
+      profilePicture: user.profilePicture,
+      online: onlineUsers.has(user.username),
+    })) satisfies PublicUserWithOnlineStatus[];
 
-    this.emitAll(eventNames.onlineUsers, allUsers);
+    this.emitAll(eventNames.allUsers, allUsers);
+  }
+
+  private async broadcastAllGroupChats() {
+    const allGroupChats = this.chatDatabase.getPublicGroupChats();
+
+    this.emitAll(eventNames.allGroupChats, allGroupChats);
   }
 }

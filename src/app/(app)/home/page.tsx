@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { getURLFromKey } from "@/lib/s3client";
 
 import { OnlineUsers } from "./OnlineUsers";
+import { GroupChat } from "./GroupChat";
 
 export default async function Home() {
   const username = await getUser();
@@ -36,7 +37,11 @@ export default async function Home() {
         </div>
       </header>
 
-      <OnlineUsers />
+      <main className="flex flex-col gap-8">
+        <OnlineUsers />
+
+        <GroupChat />
+      </main>
     </main>
   );
 }

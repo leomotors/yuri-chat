@@ -1,10 +1,14 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 import { eventNames } from "@/constants";
-import { PublicUser } from "@/types";
+import {
+  PublicGroupChat,
+  PublicUser,
+  PublicUserWithOnlineStatus,
+} from "@/types";
 
 import { SocketContext } from "./socketContext";
 
@@ -14,14 +18,23 @@ type Props = {
 
 export function SocketProvider({ children }: Props) {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [onlineUsers, setOnlineUsers] = useState<PublicUser[]>([]);
+  const [allUsers, setAllUsers] = useState<PublicUserWithOnlineStatus[]>([]);
+  const onlineUsers = useMemo(
+    () => allUsers.filter((user) => user.online),
+    [allUsers],
+  );
+  const [allGroupChats, setAllGroupChats] = useState<PublicGroupChat[]>([]);
 
   useEffect(() => {
     const newSocket = io();
     setSocket(newSocket);
 
-    newSocket.on(eventNames.onlineUsers, (users: PublicUser[]) => {
-      setOnlineUsers(users);
+    newSocket.on(eventNames.allUsers, (users: PublicUserWithOnlineStatus[]) => {
+      setAllUsers(users);
+    });
+
+    newSocket.on(eventNames.allGroupChats, (groupChats: PublicGroupChat[]) => {
+      setAllGroupChats(groupChats);
     });
 
     return () => {
@@ -33,7 +46,9 @@ export function SocketProvider({ children }: Props) {
     <SocketContext.Provider
       value={{
         socket,
+        allUsers,
         onlineUsers,
+        allGroupChats,
       }}
     >
       {children}

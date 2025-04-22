@@ -8,7 +8,7 @@ export function OnlineUsers() {
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <h2 className="text-lg font-semibold">Online Users</h2>
+      <h2 className="text-text-primary text-lg font-semibold">Online Users</h2>
       <ul className="flex gap-2">
         {onlineUsers.map((user) => (
           <li key={user.username}>
