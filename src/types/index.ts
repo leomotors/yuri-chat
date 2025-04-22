@@ -1,3 +1,4 @@
+// @ts-ignore
 import type { MessageType } from "@prisma/client";
 
 import type prisma from "@/lib/prisma";
