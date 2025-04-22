@@ -1,13 +1,15 @@
 "use client";
 
-import buttonStyles from "@/styles/button.module.css";
-import formStyles from "@/styles/form.module.css";
 import { useActionState } from "react";
 import { twMerge } from "tailwind-merge";
-import { createGroup } from "./actions";
+
+import { useServerContext } from "@/context/serverContext";
 import { useSocket } from "@/context/socketContext";
 import { getURLFromKey } from "@/lib/s3client";
-import { useServerContext } from "@/context/serverContext";
+import buttonStyles from "@/styles/button.module.css";
+import formStyles from "@/styles/form.module.css";
+
+import { createGroup } from "./actions";
 
 export function GroupChat() {
   const { username } = useServerContext();

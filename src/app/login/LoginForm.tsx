@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   FormEvent,
   ReactNode,
@@ -9,10 +10,10 @@ import {
   useState,
 } from "react";
 
-import { loginUser } from "./actions";
-import { decryptWithPassword } from "@/lib/crypto";
 import { localStoragePrivateKey } from "@/constants";
-import { useRouter } from "next/navigation";
+import { decryptWithPassword } from "@/lib/crypto";
+
+import { loginUser } from "./actions";
 
 type Props = {
   className?: string;

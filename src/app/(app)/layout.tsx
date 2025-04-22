@@ -1,9 +1,9 @@
+import { unauthorized } from "next/navigation";
 import { ReactNode } from "react";
 
+import { ServerProvider } from "@/context/ServerProvider";
 import { SocketProvider } from "@/context/SocketProvider";
 import { getUser } from "@/lib/auth";
-import { unauthorized } from "next/navigation";
-import { ServerProvider } from "@/context/ServerProvider";
 
 type Props = {
   children: ReactNode;

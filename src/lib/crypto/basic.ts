@@ -1,4 +1,4 @@
-import { bufferToBase64, base64ToBuffer } from "./utils";
+import { base64ToBuffer, bufferToBase64 } from "./utils";
 
 async function getKeyFromPassword(password: string, salt: Uint8Array) {
   const enc = new TextEncoder();

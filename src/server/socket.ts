@@ -5,13 +5,13 @@ import { Socket } from "socket.io";
 import { authCookieName, eventNames } from "@/constants";
 import { environment } from "@/lib/environment";
 import prisma from "@/lib/prisma";
-import {
-  PublicGroupChat,
-  User,
-  GroupChatFull,
-  PublicUserWithOnlineStatus,
-} from "@/types";
 import { allGroupChats } from "@/lib/query";
+import {
+  GroupChatFull,
+  PublicGroupChat,
+  PublicUserWithOnlineStatus,
+  User,
+} from "@/types";
 
 class SocketClient {
   constructor(

@@ -1,8 +1,9 @@
 "use server";
 
+import { redirect, unauthorized } from "next/navigation";
+
 import { getUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { redirect, unauthorized } from "next/navigation";
 
 export async function createGroup(_: unknown, formData: FormData) {
   const groupName = formData.get("groupName")?.toString();

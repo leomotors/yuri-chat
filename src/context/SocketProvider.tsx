@@ -4,11 +4,7 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 import { eventNames } from "@/constants";
-import {
-  PublicGroupChat,
-  PublicUser,
-  PublicUserWithOnlineStatus,
-} from "@/types";
+import { PublicGroupChat, PublicUserWithOnlineStatus } from "@/types";
 
 import { SocketContext } from "./socketContext";
 

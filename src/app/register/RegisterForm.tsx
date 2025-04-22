@@ -2,13 +2,14 @@
 
 import { FormEvent, ReactNode, startTransition, useActionState } from "react";
 
-import { registerUser } from "./actions";
+import { localStoragePrivateKey } from "@/constants";
 import {
   bufferToBase64,
   encryptWithPassword,
   generateKeyPair,
 } from "@/lib/crypto";
-import { localStoragePrivateKey } from "@/constants";
+
+import { registerUser } from "./actions";
 
 type Props = {
   className?: string;

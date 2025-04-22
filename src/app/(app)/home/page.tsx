@@ -4,8 +4,8 @@ import { getUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getURLFromKey } from "@/lib/s3client";
 
-import { OnlineUsers } from "./OnlineUsers";
 import { GroupChat } from "./GroupChat";
+import { OnlineUsers } from "./OnlineUsers";
 
 export default async function Home() {
   const username = await getUser();

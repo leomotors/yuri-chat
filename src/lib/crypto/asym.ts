@@ -1,4 +1,4 @@
-import { bufferToBase64, base64ToBuffer } from "./utils";
+import { base64ToBuffer, bufferToBase64 } from "./utils";
 
 export async function generateKeyPair() {
   const keyPair = await crypto.subtle.generateKey(

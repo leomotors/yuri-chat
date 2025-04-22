@@ -1,7 +1,8 @@
 "use client";
 
-import { localStoragePrivateKey } from "@/constants";
 import { useEffect, useState } from "react";
+
+import { localStoragePrivateKey } from "@/constants";
 import styles from "@/styles/button.module.css";
 
 export function Logout() {
