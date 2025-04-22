@@ -210,7 +210,7 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     } satisfies ClientSendMessage);
   }
 
-  const handleStickerClick = async (sticker: typeof stickers[number]) => {
+  async function handleStickerClick(sticker: typeof stickers[number]) {
     if (sticker.soundbiteUrl) {
       const audio = new Audio(sticker.soundbiteUrl);
       audio.play().catch((err) => {
@@ -286,6 +286,12 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
                     src={getURLFromKey(message.content)}
                     alt="something"
                     className="max-w-lg"
+                  />
+                ): message.contentType === "STICKER" ? (
+                  <img
+                    src={JSON.parse(message.content).imageUrl}
+                    alt="sticker"
+                    className="w-24 h-24"
                   />
                 ) : (
                   "Unsupported"
