@@ -221,7 +221,14 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
             />
 
             <div>
-              <p className="text-text-primary flex items-center gap-1 text-sm">
+              <p
+                className={twMerge(
+                  "text-text-primary flex items-center gap-1 text-sm",
+                  message.sender.username === username
+                    ? "justify-end"
+                    : "justify-start",
+                )}
+              >
                 <span>{message.sender.name}</span>
                 {message.encrypted && !message.failure && (
                   <BadgeCheck className="h-4 w-4" />
@@ -239,7 +246,11 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
                 {message.contentType === "TEXT" ? (
                   message.content
                 ) : message.contentType === "MEDIA" ? (
-                  <img src={getURLFromKey(message.content)} alt="something" />
+                  <img
+                    src={getURLFromKey(message.content)}
+                    alt="something"
+                    className="max-w-lg"
+                  />
                 ) : (
                   "Unsupported"
                 )}
