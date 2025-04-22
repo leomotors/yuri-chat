@@ -1,10 +1,11 @@
 "use client";
 
-import { BadgeCheck, ImagePlay, Sticker } from "lucide-react";
+import { BadgeCheck, ImagePlay, Sticker, Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { eventNames, localStoragePrivateKey } from "@/constants";
+import { stickers } from "@/constants/stickers";
 import { useServerContext } from "@/context/serverContext";
 import { useSocket } from "@/context/socketContext";
 import {
@@ -23,7 +24,6 @@ import {
   MessageWithSender,
   PublicGroupChat,
 } from "@/types";
-import { stickers } from "@/constants/stickers";
 
 type Props = {
   roomId: string;
@@ -224,10 +224,10 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     } satisfies ClientSendMessage);
   }
 
-  async function handleStickerClick(sticker: typeof stickers[number]) {    
+  async function handleStickerClick(sticker: (typeof stickers)[number]) {
     const content = {
       imageUrl: sticker.imageUrl,
-      soundbiteUrl: sticker.soundbiteUrl || null
+      soundbiteUrl: sticker.soundbiteUrl || null,
     };
 
     socket?.emit(eventNames.sendMessage, {
@@ -236,15 +236,8 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
       roomId,
     } satisfies ClientSendMessage);
 
-    if (sticker.soundbiteUrl) {
-      const audio = new Audio(sticker.soundbiteUrl);
-      audio.play().catch((err) => {
-        console.error("Error playing soundbite:", err);
-      });
-    }
-
     setStickerPopupVisible(false);
-  };
+  }
 
   const toggleStickerPopup = () => {
     setStickerPopupVisible((prev) => !prev);
@@ -299,13 +292,27 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
                   <img
                     src={getURLFromKey(message.content)}
                     alt="something"
-                    className="max-w-lg"
+                    className="max-w-md"
                   />
-                ): message.contentType === "STICKER" ? (
+                ) : message.contentType === "STICKER" ? (
                   <img
                     src={JSON.parse(message.content).imageUrl}
                     alt="sticker"
-                    className="w-24 h-24"
+                    className={twMerge(
+                      "max-w-md",
+                      JSON.parse(message.content).soundbiteUrl
+                        ? "cursor-pointer"
+                        : "pointer-events-none",
+                    )}
+                    onClick={() => {
+                      const content = JSON.parse(message.content);
+                      if (content.soundbiteUrl) {
+                        const audio = new Audio(content.soundbiteUrl);
+                        audio.play().catch((err) => {
+                          console.error("Error playing soundbite:", err);
+                        });
+                      }
+                    }}
                   />
                 ) : (
                   "Unsupported"
@@ -315,46 +322,6 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
           </div>
         ))}
       </div>
-      
-      {/* Stickers Popup */}
-      {isStickerPopupVisible && (
-      <div className="absolute bottom-16 left-0 right-0 mx-auto w-64 bg-white shadow-lg rounded-lg p-4 z-50">
-        <div className="grid grid-cols-6 gap-2">
-          {stickers.map((sticker) => (
-            <div key={sticker.name} className="relative">
-              {/* Sticker Image */}
-              <img
-                src={sticker.imageUrl}
-                alt={sticker.name}
-                title={sticker.name}
-                className="cursor-pointer w-16 h-16 object-contain"
-                onClick={() => handleStickerClick(sticker)}
-              />
-
-              {/* Volume Icon */}
-              {sticker.soundbiteUrl && (
-                <div className="absolute top-0 right-0 bg-black bg-opacity-50 rounded-full p-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 5l-6 6m0 0l6 6m-6-6h12"
-                    />
-                  </svg>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
 
       {/*Input Section*/}
       <div className="flex gap-4 pt-4">
@@ -370,8 +337,39 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
           onChange={handleFileInput}
         />
 
-        <button className={btnStyles.smallButton} onClick={toggleStickerPopup}>
+        <button
+          className={twMerge(btnStyles.smallButton, "relative")}
+          onClick={toggleStickerPopup}
+        >
           <Sticker />
+
+          {/* Stickers Popup */}
+          {isStickerPopupVisible && (
+            <div className="absolute right-0 bottom-16 left-0 z-50 mx-auto max-h-64 w-128 overflow-y-scroll rounded-lg bg-white p-4 shadow-lg">
+              <div className="grid grid-cols-12 gap-2">
+                {stickers.map((sticker) => (
+                  <div key={sticker.name} className="relative">
+                    {/* Sticker Image */}
+                    <img
+                      src={sticker.imageUrl}
+                      alt={sticker.name}
+                      title={sticker.name}
+                      className="h-16 w-16 cursor-pointer object-contain"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStickerClick(sticker);
+                      }}
+                    />
+
+                    {/* Volume Icon */}
+                    {sticker.soundbiteUrl && (
+                      <Volume2 className="absolute top-0 right-2 h-4 w-4 text-black" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </button>
 
         <form

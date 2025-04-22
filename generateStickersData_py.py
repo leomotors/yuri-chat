@@ -10,6 +10,8 @@ soundbite_extensions = [".mp3", ".wav", ".ogg"]
 sticker_files = [f for f in os.listdir(stickers_folder) if any(
     f.endswith(ext) for ext in image_extensions)]
 
+sticker_files.sort()
+
 stickers = []
 
 for file in sticker_files:
