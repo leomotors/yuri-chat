@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 
 import { Logout } from "./Logout";
+import { LoginProvider } from "@/context/LoginProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,22 +33,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="bg-background relative flex min-h-screen flex-col overflow-hidden text-gray-800">
-          {/* Header */}
-          <nav className="bg-[#FFD1DC] p-6 shadow-md">
-            <div className="mx-auto flex max-w-7xl items-center justify-between">
-              <h1 className="text-4xl font-extrabold tracking-wide text-[#EC407A]">
-                <Link href="/">Yuri-Chat</Link>
-              </h1>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700 italic">
-                  Socket Programming Project
-                </span>
-                <Logout />
-              </div>
-            </div>
-          </nav>
-
           {children}
 
           {/* Footer */}
