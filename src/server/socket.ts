@@ -7,7 +7,9 @@ import { environment } from "@/lib/environment";
 import prisma from "@/lib/prisma";
 import { allGroupChats } from "@/lib/query";
 import {
+  ClientSendMessage,
   GroupChatFull,
+  MessageWithSender,
   PublicGroupChat,
   PublicUserWithOnlineStatus,
   User,
@@ -68,6 +70,7 @@ class ChatDatabase {
         id: chat.id,
         name: chat.name,
         createdAt: chat.createdAt,
+        isGroupChat: chat.isGroupChat,
         lastMessageSent: chat.lastMessageSent,
         chatMemberships: chat.chatMemberships.map((membership) => ({
           user: {
@@ -123,6 +126,64 @@ export class SocketManager {
       socket.on(eventNames.requestRefreshGroupChats, async () => {
         await this.chatDatabase.refresh();
         this.broadcastAllGroupChats();
+      });
+
+      socket.on(eventNames.sendMessage, async (message: ClientSendMessage) => {
+        // todo security check if user can send message
+
+        const newMessage = await prisma.message.create({
+          data: {
+            sender: {
+              connect: {
+                username: username,
+              },
+            },
+            chat: {
+              connect: {
+                id: message.roomId,
+              },
+            },
+            content: message.content,
+            contentType: message.messageType,
+          },
+        });
+
+        const allReceivers = await prisma.chatMembership.findMany({
+          where: {
+            chatId: message.roomId,
+          },
+          select: {
+            user: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        });
+
+        const receivers = allReceivers.map((r) => r.user.username);
+
+        const user = await prisma.user.findUniqueOrThrow({
+          where: {
+            username: username,
+          },
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            profilePicture: true,
+            publicKey: true,
+          },
+        });
+
+        for (const client of Object.values(this.clients)) {
+          if (receivers.includes(client.username)) {
+            client.socket.emit(eventNames.newMessage, {
+              ...newMessage,
+              sender: user,
+            } satisfies MessageWithSender);
+          }
+        }
       });
 
       socket.on("disconnect", () => {

@@ -21,4 +21,6 @@ export const eventNames = {
   allUsers: "allUsers",
   allGroupChats: "allGroupChats",
   requestRefreshGroupChats: "requestRefreshGroupChats",
+  sendMessage: "sendMessage",
+  newMessage: "newMessage",
 } as const satisfies Record<string, string>;

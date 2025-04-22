@@ -11,7 +11,7 @@ export default async function ChatLayout({ children }: Props) {
     <div className="flex flex-grow">
       <ChatSidebar />
 
-      <div className="flex-grow">{children}</div>
+      <div className="flex flex-grow flex-col">{children}</div>
     </div>
   );
 }

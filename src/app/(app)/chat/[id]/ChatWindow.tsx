@@ -1,0 +1,222 @@
+"use client";
+
+import { useSocket } from "@/context/socketContext";
+import {
+  ClientSendMessage,
+  MessageWithEncryptionStatus,
+  MessageWithSender,
+  PublicGroupChat,
+} from "@/types";
+import { useEffect, useState } from "react";
+import { ImagePlay, Sticker } from "lucide-react";
+
+import styles from "@/styles/form.module.css";
+import btnStyles from "@/styles/button.module.css";
+import { twMerge } from "tailwind-merge";
+import { eventNames, localStoragePrivateKey } from "@/constants";
+import { getURLFromKey } from "@/lib/s3client";
+import { useServerContext } from "@/context/serverContext";
+import {
+  base64ToBuffer,
+  decryptWithPrivateKey,
+  encryptWithPublicKey,
+  importPrivateKey,
+  importPublicKey,
+} from "@/lib/crypto";
+
+type Props = {
+  roomId: string;
+  initialMessages: MessageWithSender[];
+  chatRoom: PublicGroupChat;
+};
+
+export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
+  const { username } = useServerContext();
+  const { socket } = useSocket();
+  const [privateKey, setPrivateKey] = useState<string>();
+  const [messages, setMessages] = useState<MessageWithEncryptionStatus[]>();
+
+  const [init, setInit] = useState(false);
+
+  const [importedPrivateKey, setImportedPrivateKey] = useState<CryptoKey>();
+
+  useEffect(() => {
+    setPrivateKey(localStorage.getItem(localStoragePrivateKey) || undefined);
+  }, []);
+
+  useEffect(() => {
+    async function importKey() {
+      if (!privateKey) return;
+
+      const imported = await importPrivateKey(
+        base64ToBuffer(privateKey).buffer,
+      );
+
+      setImportedPrivateKey(imported);
+    }
+
+    importKey();
+  }, [privateKey]);
+
+  async function decryptMessages(message: MessageWithSender[]) {
+    if (chatRoom.isGroupChat)
+      return message.map((msg) => ({
+        ...msg,
+        encrypted: false,
+        failure: false,
+      }));
+
+    return await Promise.all(
+      message.map(async (msg) => {
+        // todo handle this :skull:
+        if (!msg.content.startsWith("{")) {
+          return {
+            ...msg,
+            encrypted: false,
+            failure: false,
+          };
+        }
+
+        const content = JSON.parse(msg.content) as Record<string, string>;
+
+        if (!importedPrivateKey || !content[username]) {
+          return {
+            ...msg,
+            content: "Failed to decrypt message",
+            encrypted: true,
+            failure: true,
+          };
+        }
+
+        const decrypted = await decryptWithPrivateKey(
+          importedPrivateKey,
+          content[username],
+        );
+
+        return {
+          ...msg,
+          content: decrypted,
+          encrypted: true,
+          failure: false,
+        };
+      }),
+    );
+  }
+
+  useEffect(() => {
+    if (!importedPrivateKey) return;
+    if (init) return;
+
+    async function initMessages() {
+      const decryptedMessages = await decryptMessages(initialMessages);
+      setMessages(decryptedMessages);
+      setInit(true);
+    }
+
+    initMessages();
+  }, [init, importedPrivateKey]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const listener = async (message: MessageWithSender) => {
+      const decrypted = (await decryptMessages([message]))[0];
+
+      setMessages((prev) => [...(prev || []), decrypted]);
+    };
+
+    socket.on(eventNames.newMessage, listener);
+
+    return () => {
+      socket.off(eventNames.newMessage, listener);
+    };
+  });
+
+  const [inputMsg, setInputMsg] = useState("");
+
+  async function encryptMessage(message: string) {
+    if (chatRoom.isGroupChat) return message;
+
+    const totalContent = {} as Record<string, string>;
+
+    for (const membership of chatRoom.chatMemberships.map((m) => m.user)) {
+      const importedPub = await importPublicKey(
+        base64ToBuffer(membership.publicKey).buffer,
+      );
+      const encrypted = await encryptWithPublicKey(importedPub, message);
+      totalContent[membership.username] = encrypted;
+    }
+
+    return JSON.stringify(totalContent);
+  }
+
+  async function handleSendMessage() {
+    if (!inputMsg) return;
+
+    socket?.emit(eventNames.sendMessage, {
+      content: await encryptMessage(inputMsg),
+      messageType: "TEXT",
+      roomId,
+    } satisfies ClientSendMessage);
+
+    setInputMsg("");
+  }
+
+  return (
+    <main className="bg-foreground flex flex-grow flex-col justify-between rounded-lg p-4 shadow-lg">
+      <div className="flex flex-col gap-4 overflow-y-auto py-2">
+        {messages?.map((message) => (
+          <div
+            key={message.id}
+            className={twMerge(
+              "flex items-center gap-2",
+              message.sender.username === username
+                ? "flex-row-reverse items-end"
+                : "flex-row items-start",
+            )}
+          >
+            <img
+              src={getURLFromKey(message.sender.profilePicture)}
+              alt="pfp"
+              className="h-16 w-16 rounded-full"
+            />
+
+            <div>
+              <p className="text-text-primary text-sm">{message.sender.name}</p>
+              <p
+                className={twMerge(
+                  "text-text-primary-light rounded-lg bg-white p-2 shadow-md",
+                  message.sender.username === username
+                    ? "rounded-br-none text-end"
+                    : "rounded-bl-none text-start",
+                )}
+              >
+                {message.content}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex gap-4">
+        <button className={btnStyles.smallButton}>
+          <ImagePlay />
+        </button>
+        <button className={btnStyles.smallButton}>
+          <Sticker />
+        </button>
+
+        <input
+          type="text"
+          className={twMerge(styles.input, "flex-grow")}
+          placeholder="Type your Message"
+          value={inputMsg}
+          onChange={(e) => setInputMsg(e.target.value)}
+        />
+        <button className={btnStyles.smallButton} onClick={handleSendMessage}>
+          Send
+        </button>
+      </div>
+    </main>
+  );
+}
