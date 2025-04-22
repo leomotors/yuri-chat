@@ -1,6 +1,7 @@
+import type { MessageType } from "@prisma/client";
+
 import type prisma from "@/lib/prisma";
 import type { allGroupChats, getMessagesWithSender } from "@/lib/query";
-import type { MessageType } from "@prisma/client";
 
 export type User = Awaited<ReturnType<typeof prisma.user.findMany>>[number];
 

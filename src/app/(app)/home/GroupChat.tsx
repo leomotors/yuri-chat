@@ -32,7 +32,7 @@ export function GroupChat() {
             </div>
 
             <div className="flex w-full justify-between gap-2">
-              <div>
+              <div className="flex gap-1">
                 {groupChat.chatMemberships.map((member) => (
                   <img
                     key={member.user.username}

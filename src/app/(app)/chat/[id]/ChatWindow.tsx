@@ -1,21 +1,12 @@
 "use client";
 
-import { useSocket } from "@/context/socketContext";
-import {
-  ClientSendMessage,
-  MessageWithEncryptionStatus,
-  MessageWithSender,
-  PublicGroupChat,
-} from "@/types";
-import { useEffect, useState } from "react";
-import { ImagePlay, Sticker } from "lucide-react";
-
-import styles from "@/styles/form.module.css";
-import btnStyles from "@/styles/button.module.css";
+import { BadgeCheck, ImagePlay, Sticker } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
+
 import { eventNames, localStoragePrivateKey } from "@/constants";
-import { getURLFromKey } from "@/lib/s3client";
 import { useServerContext } from "@/context/serverContext";
+import { useSocket } from "@/context/socketContext";
 import {
   base64ToBuffer,
   decryptWithPrivateKey,
@@ -23,6 +14,15 @@ import {
   importPrivateKey,
   importPublicKey,
 } from "@/lib/crypto";
+import { getURLFromKey } from "@/lib/s3client";
+import btnStyles from "@/styles/button.module.css";
+import styles from "@/styles/form.module.css";
+import {
+  ClientSendMessage,
+  MessageWithEncryptionStatus,
+  MessageWithSender,
+  PublicGroupChat,
+} from "@/types";
 
 type Props = {
   roomId: string;
@@ -69,7 +69,7 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     return await Promise.all(
       message.map(async (msg) => {
         // todo handle this :skull:
-        if (!msg.content.startsWith("{")) {
+        if (msg.contentType !== "TEXT" || !msg.content.startsWith("{")) {
           return {
             ...msg,
             encrypted: false,
@@ -120,6 +120,8 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     if (!socket) return;
 
     const listener = async (message: MessageWithSender) => {
+      if (message.chatId !== roomId) return;
+
       const decrypted = (await decryptMessages([message]))[0];
 
       setMessages((prev) => [...(prev || []), decrypted]);
@@ -162,8 +164,45 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     setInputMsg("");
   }
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function imageButtonClick() {
+    if (!fileInputRef.current) return;
+
+    fileInputRef.current.click();
+  }
+
+  async function handleFileInput() {
+    const file = fileInputRef.current?.files?.[0];
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("roomId", roomId);
+    formData.append("type", file.type);
+
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      console.error(`Error uploading file: ${await res.text()}`);
+      return;
+    }
+
+    const key = await res.text();
+
+    socket?.emit(eventNames.sendMessage, {
+      content: key,
+      messageType: "MEDIA",
+      roomId,
+    } satisfies ClientSendMessage);
+  }
+
   return (
-    <main className="bg-foreground flex flex-grow flex-col justify-between rounded-lg p-4 shadow-lg">
+    <main className="bg-foreground flex h-[calc(1vh)] flex-grow flex-col justify-between rounded-lg p-4 shadow-lg">
       <div className="flex flex-col gap-4 overflow-y-auto py-2">
         {messages?.map((message) => (
           <div
@@ -182,26 +221,47 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
             />
 
             <div>
-              <p className="text-text-primary text-sm">{message.sender.name}</p>
+              <p className="text-text-primary flex items-center gap-1 text-sm">
+                <span>{message.sender.name}</span>
+                {message.encrypted && !message.failure && (
+                  <BadgeCheck className="h-4 w-4" />
+                )}
+              </p>
               <p
                 className={twMerge(
                   "text-text-primary-light rounded-lg bg-white p-2 shadow-md",
                   message.sender.username === username
                     ? "rounded-br-none text-end"
                     : "rounded-bl-none text-start",
+                  message.failure && "text-red-500",
                 )}
               >
-                {message.content}
+                {message.contentType === "TEXT" ? (
+                  message.content
+                ) : message.contentType === "MEDIA" ? (
+                  <img src={getURLFromKey(message.content)} alt="something" />
+                ) : (
+                  "Unsupported"
+                )}
               </p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-4">
-        <button className={btnStyles.smallButton}>
+      <div className="flex gap-4 pt-4">
+        <button className={btnStyles.smallButton} onClick={imageButtonClick}>
           <ImagePlay />
         </button>
+
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileInput}
+        />
+
         <button className={btnStyles.smallButton}>
           <Sticker />
         </button>
