@@ -24,6 +24,7 @@ import {
   PublicGroupChat,
 } from "@/types";
 
+
 type Props = {
   roomId: string;
   initialMessages: MessageWithSender[];
@@ -102,6 +103,18 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
       }),
     );
   }
+
+  function playSoundbite(soundUrl: string) {
+    const audio = new Audio(soundUrl);
+    audio.play();
+  }
+
+  stickers.map((sticker) => (
+    <div key={sticker.name}>
+      <img src={sticker.imageUrl} alt={sticker.name} />
+      <button onClick={() => playSoundbite(sticker.soundbiteUrl)}>Play Sound</button>
+    </div>
+  ));
 
   useEffect(() => {
     if (!importedPrivateKey) return;
