@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -43,13 +44,15 @@ export function GroupChat() {
                 ))}
               </div>
 
-              <button className={buttonStyles.smallButton}>
-                {groupChat.chatMemberships.some(
-                  (member) => member.user.username === username,
-                )
-                  ? "Chat"
-                  : "Join"}
-              </button>
+              <Link href={`/chat/${groupChat.id}`}>
+                <button className={buttonStyles.smallButton}>
+                  {groupChat.chatMemberships.some(
+                    (member) => member.user.username === username,
+                  )
+                    ? "Chat"
+                    : "Join"}
+                </button>
+              </Link>
             </div>
           </li>
         ))}

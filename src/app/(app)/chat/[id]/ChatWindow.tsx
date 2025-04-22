@@ -137,6 +137,12 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     };
   });
 
+  useEffect(() => {
+    const ele = document.getElementById("chatWindow");
+    if (!ele) return;
+    ele.scrollTop = ele.scrollHeight;
+  }, [messages]);
+
   const [inputMsg, setInputMsg] = useState("");
 
   async function encryptMessage(message: string) {
@@ -348,16 +354,21 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
           <Sticker />
         </button>
 
-        <input
-          type="text"
-          className={twMerge(styles.input, "flex-grow")}
-          placeholder="Type your Message"
-          value={inputMsg}
-          onChange={(e) => setInputMsg(e.target.value)}
-        />
-        <button className={btnStyles.smallButton} onClick={handleSendMessage}>
-          Send
-        </button>
+        <form
+          className="flex h-fit flex-grow gap-4"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <input
+            type="text"
+            className={twMerge(styles.input, "flex-grow")}
+            placeholder="Type your Message"
+            value={inputMsg}
+            onChange={(e) => setInputMsg(e.target.value)}
+          />
+          <button className={btnStyles.smallButton} onClick={handleSendMessage}>
+            Send
+          </button>
+        </form>
       </div>
     </main>
   );
