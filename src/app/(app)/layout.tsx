@@ -1,5 +1,6 @@
-import { SocketProvider } from "@/context/SocketProvider";
 import { ReactNode } from "react";
+
+import { SocketProvider } from "@/context/SocketProvider";
 
 type Props = {
   children: ReactNode;

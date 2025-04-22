@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getUser } from "./lib/auth";
 import { authCookieName } from "./constants";
+import { getUser } from "./lib/auth";
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get(authCookieName)?.value;

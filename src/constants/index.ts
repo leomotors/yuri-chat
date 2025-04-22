@@ -14,7 +14,7 @@ export const limits = {
 } as const satisfies Record<string, { min: number; max: number }>;
 
 export const authCookieName = "yuri-token";
-export const pfpBucketName = "profilePictures";
+export const pfpFolderName = "profilePictures";
 
 export const eventNames = {
   onlineUsers: "onlineUsers",

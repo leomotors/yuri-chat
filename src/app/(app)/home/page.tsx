@@ -2,7 +2,8 @@ import { unauthorized } from "next/navigation";
 
 import { getUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { getURLFromKey } from "@/lib/s3";
+import { getURLFromKey } from "@/lib/s3client";
+
 import { OnlineUsers } from "./OnlineUsers";
 
 export default async function Home() {
@@ -18,7 +19,7 @@ export default async function Home() {
     },
   });
 
-  const profilePictureURL = await getURLFromKey(user.profilePicture);
+  const profilePictureURL = getURLFromKey(user.profilePicture);
 
   return (
     <main className="flex flex-grow flex-col items-center gap-4 p-4">

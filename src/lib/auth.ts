@@ -3,8 +3,9 @@ import "server-only";
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-import { environment } from "./environment";
 import { authCookieName } from "@/constants";
+
+import { environment } from "./environment";
 
 export async function getUser() {
   const cookieStore = await cookies();

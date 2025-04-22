@@ -1,9 +1,12 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
-import { SocketContext } from "./socketContext";
-import { Socket, io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
+
 import { eventNames } from "@/constants";
+import { PublicUser } from "@/types";
+
+import { SocketContext } from "./socketContext";
 
 type Props = {
   children: ReactNode;
@@ -11,13 +14,13 @@ type Props = {
 
 export function SocketProvider({ children }: Props) {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<PublicUser[]>([]);
 
   useEffect(() => {
     const newSocket = io();
     setSocket(newSocket);
 
-    newSocket.on(eventNames.onlineUsers, (users: string[]) => {
+    newSocket.on(eventNames.onlineUsers, (users: PublicUser[]) => {
       setOnlineUsers(users);
     });
 

@@ -6,7 +6,7 @@ import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { authCookieName, limits, pfpBucketName } from "@/constants";
+import { authCookieName, limits, pfpFolderName } from "@/constants";
 import { environment } from "@/lib/environment";
 import prisma from "@/lib/prisma";
 import { s3 } from "@/lib/s3";
@@ -106,12 +106,12 @@ async function uploadProfilePicture(file: File, username: string) {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
-  const key = `${pfpBucketName}/${username}-${Date.now()}.${file.type.split("/")[1]}`;
+  const key = `${pfpFolderName}/${username}-${Date.now()}.${file.type.split("/")[1]}`;
 
   try {
     await s3.send(
       new PutObjectCommand({
-        Bucket: environment.AWS_BUCKET_NAME,
+        Bucket: environment.NEXT_PUBLIC_AWS_BUCKET_NAME,
         Key: key,
         Body: buffer,
         ContentType: file.type,
