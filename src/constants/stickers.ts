@@ -62,7 +62,7 @@ export const stickers = [
   {
     name: "depression",
     imageUrl: "/stickers/depression.png",
-    soundbiteUrl: null,
+    soundbiteUrl: "/soundbites/depression.ogg",
   },
   {
     name: "despair",
