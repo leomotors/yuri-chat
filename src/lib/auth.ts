@@ -4,11 +4,12 @@ import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 import { environment } from "./environment";
+import { authCookieName } from "@/constants";
 
 export async function getUser() {
   const cookieStore = await cookies();
 
-  const token = cookieStore.get("token")?.value;
+  const token = cookieStore.get(authCookieName)?.value;
 
   if (!token) {
     return null;
@@ -27,7 +28,7 @@ export async function getUser() {
 
     return username;
   } catch (_) {
-    cookieStore.delete("token");
+    cookieStore.delete(authCookieName);
 
     return null;
   }

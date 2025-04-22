@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getUser } from "./lib/auth";
+import { authCookieName } from "./constants";
 
 export async function middleware(request: NextRequest) {
-  const token = request.cookies.get("token")?.value;
+  const token = request.cookies.get(authCookieName)?.value;
 
   if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));

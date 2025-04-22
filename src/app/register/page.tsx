@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 import DuoMascot from "@/components/DuoMascot";
 import FallingFlowers from "@/components/FallingFlowers";
 import { limits } from "@/constants";
-import styles from "@/styles/form.module.scss";
+import styles from "@/styles/form.module.css";
 
 import { RegisterForm } from "./RegisterForm";
 

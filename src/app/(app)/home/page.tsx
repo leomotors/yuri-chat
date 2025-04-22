@@ -3,6 +3,7 @@ import { unauthorized } from "next/navigation";
 import { getUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getURLFromKey } from "@/lib/s3";
+import { OnlineUsers } from "./OnlineUsers";
 
 export default async function Home() {
   const username = await getUser();
@@ -33,6 +34,8 @@ export default async function Home() {
           <p className="text-xl">Who will you chat with today?</p>
         </div>
       </header>
+
+      <OnlineUsers />
     </main>
   );
 }

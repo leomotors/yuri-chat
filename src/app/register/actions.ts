@@ -6,7 +6,7 @@ import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { limits, pfpBucketName } from "@/constants";
+import { authCookieName, limits, pfpBucketName } from "@/constants";
 import { environment } from "@/lib/environment";
 import prisma from "@/lib/prisma";
 import { s3 } from "@/lib/s3";
@@ -91,7 +91,7 @@ export async function registerUser(_: unknown, formData: FormData) {
     .setExpirationTime("7d")
     .sign(new TextEncoder().encode(environment.JWT_SECRET));
 
-  (await cookies()).set("token", token, {
+  (await cookies()).set(authCookieName, token, {
     secure: true,
     httpOnly: true,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
