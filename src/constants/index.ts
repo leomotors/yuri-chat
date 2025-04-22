@@ -20,4 +20,5 @@ export const localStoragePrivateKey = "privateKey";
 export const eventNames = {
   allUsers: "allUsers",
   allGroupChats: "allGroupChats",
+  requestRefreshGroupChats: "requestRefreshGroupChats",
 } as const satisfies Record<string, string>;

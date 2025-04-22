@@ -57,7 +57,7 @@ class ChatDatabase {
     this.refresh();
   }
 
-  private async refresh() {
+  public async refresh() {
     this._groupChats = await allGroupChats();
   }
 
@@ -113,8 +113,17 @@ export class SocketManager {
 
       this.clients[socket.id] = new SocketClient(socket, username);
       this.broadcastOnlineUsers();
-      // Temp
-      this.broadcastAllGroupChats();
+
+      // Give neccessary info to users
+      socket.emit(
+        eventNames.allGroupChats,
+        this.chatDatabase.getPublicGroupChats(),
+      );
+
+      socket.on(eventNames.requestRefreshGroupChats, async () => {
+        await this.chatDatabase.refresh();
+        this.broadcastAllGroupChats();
+      });
 
       socket.on("disconnect", () => {
         console.log(`${username} disconnected`);
