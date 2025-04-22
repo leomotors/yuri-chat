@@ -4,18 +4,20 @@ import path from "path";
 const stickersFolder = path.join(process.cwd(), "public", "stickers");
 const soundbitesFolder = path.join(process.cwd(), "public", "soundbites");
 
-const stickerFiles: string[] = fs.readdirSync(stickersFolder).filter((file) => file.endsWith(".png"));
+const imageExtensions = [".png", ".jpg", ".jpeg", ".gif"];
+const soundbiteExtensions = [".mp3", ".wav", ".ogg"];
+
+const stickerFiles: string[] = fs.readdirSync(stickersFolder).filter((file) => imageExtensions.some((ext) => file.endsWith(ext)));
 
 const stickers = stickerFiles.map((file) => {
-  const name = path.basename(file, ".png");
+  const name = path.basename(file, path.extname(file));
 
-  const soundbitePath = path.join(soundbitesFolder, `${name}.mp3`);
-  const soundbiteExists = fs.existsSync(soundbitePath);
+  const soundbiteFile = soundbiteExtensions.map((ext) => path.join(soundbitesFolder, `${name}${ext}`)).find((filePath) => fs.existsSync(filePath));
 
   return {
     name,
     imageUrl: `/stickers/${file}`,
-    soundbiteUrl: soundbiteExists ? `/soundbites/${name}.mp3` : undefined,
+    soundbiteUrl: soundbiteFile ? `/soundbites/${path.basename(soundbiteFile)}` : undefined,
   };
 });
 
