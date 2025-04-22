@@ -127,6 +127,20 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
 
       const decrypted = (await decryptMessages([message]))[0];
 
+      if (decrypted.contentType === "STICKER") {
+        const content = JSON.parse(decrypted.content) as {
+          imageUrl: string;
+          soundbiteUrl: string | null;
+        };
+
+        if (content.soundbiteUrl) {
+          const audio = new Audio(content.soundbiteUrl);
+          audio.play().catch((err) => {
+            console.error("Error playing soundbite:", err);
+          });
+        }
+      }
+
       setMessages((prev) => [...(prev || []), decrypted]);
     };
 
@@ -210,14 +224,7 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     } satisfies ClientSendMessage);
   }
 
-  async function handleStickerClick(sticker: typeof stickers[number]) {
-    if (sticker.soundbiteUrl) {
-      const audio = new Audio(sticker.soundbiteUrl);
-      audio.play().catch((err) => {
-        console.error("Error playing soundbite:", err);
-      });
-    }
-    
+  async function handleStickerClick(sticker: typeof stickers[number]) {    
     const content = {
       imageUrl: sticker.imageUrl,
       soundbiteUrl: sticker.soundbiteUrl || null
@@ -228,6 +235,13 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
       messageType: "STICKER",
       roomId,
     } satisfies ClientSendMessage);
+
+    if (sticker.soundbiteUrl) {
+      const audio = new Audio(sticker.soundbiteUrl);
+      audio.play().catch((err) => {
+        console.error("Error playing soundbite:", err);
+      });
+    }
 
     setStickerPopupVisible(false);
   };
