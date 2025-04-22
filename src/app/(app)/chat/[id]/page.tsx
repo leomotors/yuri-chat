@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { getMessagesWithSender } from "@/lib/query";
 
 import { ChatWindow } from "./ChatWindow";
+import { OnlineUsers } from "./OnlineUsers";
 import { Updater } from "./Updater";
 
 type Props = {
@@ -84,7 +85,8 @@ export default async function Chat({ params }: Props) {
         )}
         <span>{chatRoom.name}</span>
       </h1>
-      <p className="text-text-primary-light">Chat with {id}</p>
+
+      <OnlineUsers roomId={id} chatRoom={chatRoom} />
 
       {chatRoom.isGroupChat && <Updater />}
 
