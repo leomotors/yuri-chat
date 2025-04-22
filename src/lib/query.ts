@@ -11,3 +11,21 @@ export async function allGroupChats() {
     },
   });
 }
+
+export async function getMessagesWithSender(chatRoomId: string) {
+  return await prisma.message.findMany({
+    where: {
+      chatId: chatRoomId,
+    },
+    include: {
+      sender: {
+        select: {
+          username: true,
+          name: true,
+          profilePicture: true,
+          publicKey: true,
+        },
+      },
+    },
+  });
+}

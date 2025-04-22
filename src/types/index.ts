@@ -1,5 +1,6 @@
 import type prisma from "@/lib/prisma";
-import { allGroupChats } from "@/lib/query";
+import type { allGroupChats, getMessagesWithSender } from "@/lib/query";
+import type { MessageType } from "@prisma/client";
 
 export type User = Awaited<ReturnType<typeof prisma.user.findMany>>[number];
 
@@ -17,10 +18,25 @@ export type GroupChatFull = Awaited<ReturnType<typeof allGroupChats>>[number];
 
 export type PublicGroupChat = Pick<
   Chat,
-  "id" | "name" | "createdAt" | "lastMessageSent"
+  "id" | "isGroupChat" | "name" | "createdAt" | "lastMessageSent"
 > & {
   chatMemberships: Array<{
     user: PublicUser;
     joinedAt: Date;
   }>;
+};
+
+export type MessageWithSender = Awaited<
+  ReturnType<typeof getMessagesWithSender>
+>[number];
+
+export type MessageWithEncryptionStatus = MessageWithSender & {
+  encrypted: boolean;
+  failure: boolean;
+};
+
+export type ClientSendMessage = {
+  content: string;
+  messageType: MessageType;
+  roomId: string;
 };
