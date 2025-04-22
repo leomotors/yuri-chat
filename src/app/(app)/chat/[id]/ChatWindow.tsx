@@ -23,7 +23,7 @@ import {
   MessageWithSender,
   PublicGroupChat,
 } from "@/types";
-
+import { stickers } from "@/constants/stickers";
 
 type Props = {
   roomId: string;
@@ -40,6 +40,8 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
   const [init, setInit] = useState(false);
 
   const [importedPrivateKey, setImportedPrivateKey] = useState<CryptoKey>();
+
+  const [isStickerPopupVisible, setStickerPopupVisible] = useState(false);
 
   useEffect(() => {
     setPrivateKey(localStorage.getItem(localStoragePrivateKey) || undefined);
@@ -103,18 +105,6 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
       }),
     );
   }
-
-  function playSoundbite(soundUrl: string) {
-    const audio = new Audio(soundUrl);
-    audio.play();
-  }
-
-  stickers.map((sticker) => (
-    <div key={sticker.name}>
-      <img src={sticker.imageUrl} alt={sticker.name} />
-      <button onClick={() => playSoundbite(sticker.soundbiteUrl)}>Play Sound</button>
-    </div>
-  ));
 
   useEffect(() => {
     if (!importedPrivateKey) return;
@@ -214,8 +204,35 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     } satisfies ClientSendMessage);
   }
 
+  const handleStickerClick = async (sticker: typeof stickers[number]) => {
+    if (sticker.soundbiteUrl) {
+      const audio = new Audio(sticker.soundbiteUrl);
+      audio.play().catch((err) => {
+        console.error("Error playing soundbite:", err);
+      });
+    }
+    
+    const content = {
+      imageUrl: sticker.imageUrl,
+      soundbiteUrl: sticker.soundbiteUrl || null
+    };
+
+    socket?.emit(eventNames.sendMessage, {
+      content: JSON.stringify(content),
+      messageType: "STICKER",
+      roomId,
+    } satisfies ClientSendMessage);
+
+    setStickerPopupVisible(false);
+  };
+
+  const toggleStickerPopup = () => {
+    setStickerPopupVisible((prev) => !prev);
+  };
+
   return (
     <main className="bg-foreground flex h-[calc(1vh)] flex-grow flex-col justify-between rounded-lg p-4 shadow-lg">
+      {/* Messages */}
       <div className="flex flex-col gap-4 overflow-y-auto py-2">
         {messages?.map((message) => (
           <div
@@ -272,7 +289,48 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
           </div>
         ))}
       </div>
+      
+      {/* Stickers Popup */}
+      {isStickerPopupVisible && (
+      <div className="absolute bottom-16 left-0 right-0 mx-auto w-64 bg-white shadow-lg rounded-lg p-4 z-50">
+        <div className="grid grid-cols-6 gap-2">
+          {stickers.map((sticker) => (
+            <div key={sticker.name} className="relative">
+              {/* Sticker Image */}
+              <img
+                src={sticker.imageUrl}
+                alt={sticker.name}
+                title={sticker.name}
+                className="cursor-pointer w-16 h-16 object-contain"
+                onClick={() => handleStickerClick(sticker)}
+              />
 
+              {/* Volume Icon */}
+              {sticker.soundbiteUrl && (
+                <div className="absolute top-0 right-0 bg-black bg-opacity-50 rounded-full p-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11 5l-6 6m0 0l6 6m-6-6h12"
+                    />
+                  </svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+      {/*Input Section*/}
       <div className="flex gap-4 pt-4">
         <button className={btnStyles.smallButton} onClick={imageButtonClick}>
           <ImagePlay />
@@ -286,7 +344,7 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
           onChange={handleFileInput}
         />
 
-        <button className={btnStyles.smallButton}>
+        <button className={btnStyles.smallButton} onClick={toggleStickerPopup}>
           <Sticker />
         </button>
 
