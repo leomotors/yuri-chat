@@ -24,7 +24,6 @@ import {
   PublicGroupChat,
 } from "@/types";
 
-
 type Props = {
   roomId: string;
   initialMessages: MessageWithSender[];
@@ -109,13 +108,6 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     audio.play();
   }
 
-  stickers.map((sticker) => (
-    <div key={sticker.name}>
-      <img src={sticker.imageUrl} alt={sticker.name} />
-      <button onClick={() => playSoundbite(sticker.soundbiteUrl)}>Play Sound</button>
-    </div>
-  ));
-
   useEffect(() => {
     if (!importedPrivateKey) return;
     if (init) return;
@@ -146,6 +138,12 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
       socket.off(eventNames.newMessage, listener);
     };
   });
+
+  useEffect(() => {
+    const ele = document.getElementById("chatWindow");
+    if (!ele) return;
+    ele.scrollTop = ele.scrollHeight;
+  }, [messages]);
 
   const [inputMsg, setInputMsg] = useState("");
 
@@ -216,7 +214,7 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
 
   return (
     <main className="bg-foreground flex h-[calc(1vh)] flex-grow flex-col justify-between rounded-lg p-4 shadow-lg">
-      <div className="flex flex-col gap-4 overflow-y-auto py-2">
+      <div className="flex flex-col gap-4 overflow-y-auto py-2" id="chatWindow">
         {messages?.map((message) => (
           <div
             key={message.id}
@@ -290,16 +288,21 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
           <Sticker />
         </button>
 
-        <input
-          type="text"
-          className={twMerge(styles.input, "flex-grow")}
-          placeholder="Type your Message"
-          value={inputMsg}
-          onChange={(e) => setInputMsg(e.target.value)}
-        />
-        <button className={btnStyles.smallButton} onClick={handleSendMessage}>
-          Send
-        </button>
+        <form
+          className="flex h-fit flex-grow gap-4"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <input
+            type="text"
+            className={twMerge(styles.input, "flex-grow")}
+            placeholder="Type your Message"
+            value={inputMsg}
+            onChange={(e) => setInputMsg(e.target.value)}
+          />
+          <button className={btnStyles.smallButton} onClick={handleSendMessage}>
+            Send
+          </button>
+        </form>
       </div>
     </main>
   );
