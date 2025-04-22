@@ -2,10 +2,10 @@ import { forbidden, notFound, unauthorized } from "next/navigation";
 
 import { getUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-
-import { Updater } from "./Updater";
-import { ChatWindow } from "./ChatWindow";
 import { getMessagesWithSender } from "@/lib/query";
+
+import { ChatWindow } from "./ChatWindow";
+import { Updater } from "./Updater";
 
 type Props = {
   params: Promise<{ id: string }>;

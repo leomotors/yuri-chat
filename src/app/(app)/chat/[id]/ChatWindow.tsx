@@ -1,21 +1,12 @@
 "use client";
 
-import { useSocket } from "@/context/socketContext";
-import {
-  ClientSendMessage,
-  MessageWithEncryptionStatus,
-  MessageWithSender,
-  PublicGroupChat,
-} from "@/types";
+import { BadgeCheck, ImagePlay, Sticker } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ImagePlay, Sticker } from "lucide-react";
-
-import styles from "@/styles/form.module.css";
-import btnStyles from "@/styles/button.module.css";
 import { twMerge } from "tailwind-merge";
+
 import { eventNames, localStoragePrivateKey } from "@/constants";
-import { getURLFromKey } from "@/lib/s3client";
 import { useServerContext } from "@/context/serverContext";
+import { useSocket } from "@/context/socketContext";
 import {
   base64ToBuffer,
   decryptWithPrivateKey,
@@ -23,6 +14,15 @@ import {
   importPrivateKey,
   importPublicKey,
 } from "@/lib/crypto";
+import { getURLFromKey } from "@/lib/s3client";
+import btnStyles from "@/styles/button.module.css";
+import styles from "@/styles/form.module.css";
+import {
+  ClientSendMessage,
+  MessageWithEncryptionStatus,
+  MessageWithSender,
+  PublicGroupChat,
+} from "@/types";
 
 type Props = {
   roomId: string;
@@ -69,7 +69,7 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
     return await Promise.all(
       message.map(async (msg) => {
         // todo handle this :skull:
-        if (!msg.content.startsWith("{")) {
+        if (msg.contentType !== "TEXT" || !msg.content.startsWith("{")) {
           return {
             ...msg,
             encrypted: false,
@@ -182,13 +182,19 @@ export function ChatWindow({ roomId, initialMessages, chatRoom }: Props) {
             />
 
             <div>
-              <p className="text-text-primary text-sm">{message.sender.name}</p>
+              <p className="text-text-primary flex items-center gap-1 text-sm">
+                <span>{message.sender.name}</span>
+                {message.encrypted && !message.failure && (
+                  <BadgeCheck className="h-4 w-4" />
+                )}
+              </p>
               <p
                 className={twMerge(
                   "text-text-primary-light rounded-lg bg-white p-2 shadow-md",
                   message.sender.username === username
                     ? "rounded-br-none text-end"
                     : "rounded-bl-none text-start",
+                  message.failure && "text-red-500",
                 )}
               >
                 {message.content}
