@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { Logout } from "./Logout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,9 +37,13 @@ export default function RootLayout({
               <h1 className="text-4xl font-extrabold tracking-wide text-[#EC407A]">
                 <Link href="/">Yuri-Chat</Link>
               </h1>
-              <span className="text-sm text-gray-700 italic">
-                Socket Programming Project
-              </span>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-700 italic">
+                  Socket Programming Project
+                </span>
+                <Logout />
+              </div>
             </div>
           </nav>
 

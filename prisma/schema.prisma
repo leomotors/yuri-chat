@@ -21,6 +21,9 @@ model User {
   password       String
   profilePicture String @map("profile_picture")
 
+  publicKey           String @map("public_key")
+  encryptedPrivateKey String @map("encrypted_private_key")
+
   chatMemberships ChatMembership[]
   sentMessages    Message[]
 

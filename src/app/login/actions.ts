@@ -3,13 +3,17 @@
 import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 import { authCookieName, limits } from "@/constants";
 import { environment } from "@/lib/environment";
 import prisma from "@/lib/prisma";
 
-export async function loginUser(_: unknown, formData: FormData) {
+type State = {
+  error: string;
+  encryptedPrivateKey?: string;
+};
+
+export async function loginUser(_: State, formData: FormData) {
   const username = formData.get("username")?.toString();
   const password = formData.get("password")?.toString();
 
@@ -68,5 +72,8 @@ export async function loginUser(_: unknown, formData: FormData) {
     sameSite: "lax",
   });
 
-  redirect("/home");
+  return {
+    error: "",
+    encryptedPrivateKey: user.encryptedPrivateKey,
+  };
 }

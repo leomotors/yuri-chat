@@ -15,6 +15,7 @@ export const limits = {
 
 export const authCookieName = "yuri-token";
 export const pfpFolderName = "profilePictures";
+export const localStoragePrivateKey = "privateKey";
 
 export const eventNames = {
   allUsers: "allUsers",

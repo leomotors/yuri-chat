@@ -8,6 +8,8 @@ CREATE TABLE "users" (
     "name" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "profile_picture" TEXT NOT NULL,
+    "public_key" TEXT NOT NULL,
+    "encrypted_private_key" TEXT NOT NULL,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -18,6 +20,7 @@ CREATE TABLE "chat" (
     "is_group_chat" BOOLEAN NOT NULL,
     "name" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "last_message_sent" TIMESTAMP(3),
 
     CONSTRAINT "chat_pkey" PRIMARY KEY ("id")
 );
@@ -27,6 +30,7 @@ CREATE TABLE "chat_membership" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "chat_id" TEXT NOT NULL,
+    "joined_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "chat_membership_pkey" PRIMARY KEY ("id")
 );

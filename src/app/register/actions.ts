@@ -16,10 +16,18 @@ export async function registerUser(_: unknown, formData: FormData) {
   const name = formData.get("name")?.toString();
   const password = formData.get("password")?.toString();
   const profilePicture = formData.get("profilePicture") as File;
+  const publicKey = formData.get("publicKey")?.toString();
+  const encryptedPrivateKey = formData.get("encryptedPrivateKey")?.toString();
 
   if (!username || !name || !password || !profilePicture) {
     return {
       error: "Data is missing",
+    };
+  }
+
+  if (!publicKey || !encryptedPrivateKey) {
+    return {
+      error: "Cryptographic keys are missing",
     };
   }
 
@@ -82,6 +90,8 @@ export async function registerUser(_: unknown, formData: FormData) {
       name,
       password: hashedPassword,
       profilePicture: key,
+      publicKey,
+      encryptedPrivateKey,
     },
   });
 

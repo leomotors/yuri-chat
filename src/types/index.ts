@@ -1,8 +1,12 @@
 import type prisma from "@/lib/prisma";
 import { allGroupChats } from "@/lib/query";
-import { Prisma, User } from "@prisma/client";
 
-export type PublicUser = Pick<User, "username" | "name" | "profilePicture">;
+export type User = Awaited<ReturnType<typeof prisma.user.findMany>>[number];
+
+export type PublicUser = Pick<
+  User,
+  "username" | "name" | "profilePicture" | "publicKey"
+>;
 export type PublicUserWithOnlineStatus = PublicUser & {
   online: boolean;
 };

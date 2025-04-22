@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { parse } from "cookie";
 import { jwtVerify } from "jose";
 import { Socket } from "socket.io";
@@ -8,8 +7,7 @@ import { environment } from "@/lib/environment";
 import prisma from "@/lib/prisma";
 import {
   PublicGroupChat,
-  PublicUser,
-  Chat,
+  User,
   GroupChatFull,
   PublicUserWithOnlineStatus,
 } from "@/types";
@@ -76,6 +74,7 @@ class ChatDatabase {
             username: membership.user.username,
             name: membership.user.name,
             profilePicture: membership.user.profilePicture,
+            publicKey: membership.user.publicKey,
           },
           joinedAt: membership.joinedAt,
         })),
@@ -146,6 +145,7 @@ export class SocketManager {
       username: user.username,
       name: user.name,
       profilePicture: user.profilePicture,
+      publicKey: user.publicKey,
       online: onlineUsers.has(user.username),
     })) satisfies PublicUserWithOnlineStatus[];
 
