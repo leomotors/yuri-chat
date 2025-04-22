@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import type { MessageType } from "@prisma/client";
 
 import type prisma from "@/lib/prisma";

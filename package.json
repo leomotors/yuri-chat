@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "dev:socket": "dotenv -- tsx src/server/index.ts",
     "build": "next build",
-    "start": "next start",
+    "start": "dotenv -v NODE_ENV=production -- tsx src/server/index.ts",
     "lint": "next lint",
     "format": "next lint --fix"
   },
