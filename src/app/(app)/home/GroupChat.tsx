@@ -40,6 +40,7 @@ export function GroupChat() {
                     src={getURLFromKey(member.user.profilePicture)}
                     alt="pfp"
                     className="h-8 w-8 rounded-full"
+                    title={member.user.name}
                   />
                 ))}
               </div>
