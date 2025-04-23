@@ -43,7 +43,13 @@ export function ChatSidebar() {
                 alt="pfp"
                 className="h-8 w-8 rounded-full"
               />
-              <p className="text-text-primary-light">{user.name}</p>
+              <p
+                className={
+                  user.online ? "text-text-primary-light" : "text-grat-500"
+                }
+              >
+                {user.name}
+              </p>
             </Link>
           );
         })}
