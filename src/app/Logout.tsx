@@ -1,22 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { localStoragePrivateKey } from "@/constants";
 import styles from "@/styles/button.module.css";
+import { useLoginContext } from "@/context/loginContext";
+
+import { useRouter } from "next/navigation";
 
 export function Logout() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+  const { isLoggedIn, setIsLoggedIn, refetch } = useLoginContext();
 
   useEffect(() => {
-    const privateKey = localStorage.getItem(localStoragePrivateKey);
-    setIsLoggedIn(!!privateKey);
+    refetch();
   }, []);
 
   function handleLogout() {
     localStorage.removeItem(localStoragePrivateKey);
 
     fetch("/api/logout", { method: "POST" });
+    setIsLoggedIn(false);
+    refetch();
+    router.push("/?r=" + Date.now());
   }
 
   return (

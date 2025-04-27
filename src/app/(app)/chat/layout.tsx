@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
 import { ChatSidebar } from "./Sidebar";
+import Navbar from "@/components/Navbar";
 
 type Props = {
   children: ReactNode;
@@ -8,10 +9,13 @@ type Props = {
 
 export default async function ChatLayout({ children }: Props) {
   return (
-    <div className="flex flex-grow">
-      <ChatSidebar />
+    <>
+      <Navbar />
+      <div className="flex flex-grow">
+        <ChatSidebar />
 
-      <div className="flex flex-grow flex-col">{children}</div>
-    </div>
+        <div className="flex flex-grow flex-col">{children}</div>
+      </div>
+    </>
   );
 }
